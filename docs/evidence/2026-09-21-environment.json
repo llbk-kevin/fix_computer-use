@@ -1,0 +1,182 @@
+{
+  "collectedAt": "2026-09-21T06:55:04.8945233+08:00",
+  "os": {
+    "ProductName": "Windows 10 Enterprise LTSC 2021",
+    "EditionID": "EnterpriseS",
+    "DisplayVersion": "21H2",
+    "CurrentBuild": "19044",
+    "UBR": 1620,
+    "Architecture": "AMD64"
+  },
+  "kernel": {
+    "Caption": "Microsoft Windows 10 企业版 LTSC",
+    "Version": "10.0.19044",
+    "BuildNumber": "19044",
+    "OSArchitecture": "64 位",
+    "LastBootUpTime": "/Date(1788971325430)/"
+  },
+  "kernelFileVersion": "10.0.19041.1620 (WinBuild.160101.0800)",
+  "graphicsCapture": {
+    "TypePresent": true,
+    "IsSupported": true,
+    "IsBorderRequired": false,
+    "IsCursorCaptureEnabled": true,
+    "UniversalApiContractV12": false
+  },
+  "userInteractive": true,
+  "sessionId": 1,
+  "windowsPowerShell": "5.1.19041.1620",
+  "vcRuntimeX64": {
+    "Installed": 1,
+    "Version": "v14.38.33135.00"
+  },
+  "dotNetFrameworkRelease": 533325,
+  "appPackage": [
+    {
+      "Name": "OpenAI.Codex",
+      "Version": "26.915.4065.0",
+      "Architecture": 9,
+      "Status": 0
+    }
+  ],
+  "pendingRestart": {
+    "ComponentServicing": false,
+    "WindowsUpdate": false
+  },
+  "videoControllers": [
+    {
+      "Name": "OrayIddDriver Device",
+      "DriverVersion": "17.50.19.949",
+      "DriverDate": "/Date(1749600000000)/",
+      "Status": "OK",
+      "CurrentHorizontalResolution": null,
+      "CurrentVerticalResolution": null
+    },
+    {
+      "Name": "Todesk Virtual Display Adapter",
+      "DriverVersion": "16.44.2.509",
+      "DriverDate": "/Date(1682294400000)/",
+      "Status": "OK",
+      "CurrentHorizontalResolution": 3840,
+      "CurrentVerticalResolution": 2160
+    },
+    {
+      "Name": "AMD Radeon(TM) Graphics",
+      "DriverVersion": "32.0.21037.1004",
+      "DriverDate": "/Date(1764288000000)/",
+      "Status": "OK",
+      "CurrentHorizontalResolution": 2560,
+      "CurrentVerticalResolution": 1440
+    },
+    {
+      "Name": "GameViewer Virtual Display Adapter",
+      "DriverVersion": "15.6.5.199",
+      "DriverDate": "/Date(1772236800000)/",
+      "Status": "OK",
+      "CurrentHorizontalResolution": 3840,
+      "CurrentVerticalResolution": 2160
+    }
+  ],
+  "recentHotfixes": [
+    {
+      "HotFixID": "KB5122877",
+      "InstalledOn": "2026-09-09"
+    },
+    {
+      "HotFixID": "KB5126421",
+      "InstalledOn": "2026-09-09"
+    },
+    {
+      "HotFixID": "KB5104021",
+      "InstalledOn": "2026-07-15"
+    },
+    {
+      "HotFixID": "KB5094145",
+      "InstalledOn": "2026-06-10"
+    },
+    {
+      "HotFixID": "KB5084130",
+      "InstalledOn": "2026-04-15"
+    }
+  ],
+  "computerUse": {
+    "pluginVersion": "26.915.31945",
+    "skyVersion": "0.7.1",
+    "runtimeVersion": "0.0.16/20260915001755-492f19756c31",
+    "nativeScreenshotStatus": "failed",
+    "nativeScreenshotError": "Error: SetIsBorderRequired failed: 不支持此接口 (0x80004002)",
+    "accessibilityStatus": "passed",
+    "nativeRepairApplied": false
+  },
+  "dependencies": {
+    "git": "2.53.0.windows.3",
+    "python": "3.12.7",
+    "pillow": "12.2.0",
+    "mssInstalled": false,
+    "bundledPowerShell": {
+      "startup": "failed",
+      "exitCode": -2146233082,
+      "framework": "10.0.11",
+      "error": "Your Windows doesn't fully support CET. Please install all available Windows updates."
+    }
+  },
+  "displays": {
+    "origin": [
+      -1440,
+      -178
+    ],
+    "size": [
+      5280,
+      2560
+    ],
+    "monitors": [
+      {
+        "id": 1,
+        "device": "\\\\.\\DISPLAY1",
+        "primary": false,
+        "screen_rect": [
+          -1440,
+          -178,
+          0,
+          2382
+        ],
+        "size": [
+          1440,
+          2560
+        ],
+        "image_rect": [
+          0,
+          0,
+          1440,
+          2560
+        ]
+      },
+      {
+        "id": 2,
+        "device": "\\\\.\\DISPLAY2",
+        "primary": true,
+        "screen_rect": [
+          0,
+          0,
+          3840,
+          2160
+        ],
+        "size": [
+          3840,
+          2160
+        ],
+        "image_rect": [
+          1440,
+          178,
+          5280,
+          2338
+        ]
+      }
+    ]
+  },
+  "baseline": {
+    "commit": "2df52f4",
+    "originalSha256": "fb186aa9f1970e54755aed309d70558531f3eaa67e3314f49d96ac027b761435"
+  },
+  "scope": "Read-only diagnostics and project-local fallback; no OS, global config, plugin binaries or shared skill contents modified."
+}

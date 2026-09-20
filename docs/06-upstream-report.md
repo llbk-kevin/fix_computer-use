@@ -1,0 +1,75 @@
+# 官方后端问题报告草稿
+
+状态：仅保存于本地，尚未发送。此草稿不附聊天截图、订单或完整桌面内容。
+
+## 标题
+
+Windows 10 LTSC 2021：`get_window_state` 在缺少 `IsBorderRequired` 时无法截图（0x80004002）
+
+## 环境
+
+- Windows 10 Enterprise LTSC 2021，21H2，19044.1620，x64。
+- Codex 应用 26.915.4065.0。
+- computer-use 插件 26.915.31945；`@oai/sky` 0.7.1。
+- CUA runtime 0.0.16/20260915001755-492f19756c31。
+- 活动、解锁桌面；资源管理器普通窗口可复现。
+- 双屏虚拟桌面 5280×2560，原点 (-1440,-178)。
+
+## 最小复现
+
+在官方 `node_repl` 会话中导入 `@oai/sky`，枚举窗口，选择一个真实返回的资源管理器窗口对象。先输出并检查候选列表，再在下一次调用中使用唯一选中的窗口；不要伪造窗口 ID。
+
+初始化与选择示意：
+
+```javascript
+if (!globalThis.sky) {
+  const { sky } = await import("@oai/sky");
+  globalThis.sky = sky;
+}
+globalThis.windows = await sky.list_windows();
+nodeRepl.write(JSON.stringify(windows, null, 2));
+```
+
+在检查返回列表后，按真实标题和应用选择唯一对象并执行：
+
+```javascript
+await sky.get_window_state({
+  window: targetWindow,
+  include_screenshot: true,
+  include_text: false,
+});
+```
+
+结果：
+
+```text
+SetIsBorderRequired failed: 不支持此接口 (0x80004002)
+```
+
+重新枚举与选择窗口后再试一次，仍失败。同一窗口改为 `include_screenshot: false, include_text: true` 成功。
+
+WinRT 能力检测：
+
+```text
+GraphicsCaptureSession type present = true
+GraphicsCaptureSession.IsSupported() = true
+GraphicsCaptureSession.IsBorderRequired property present = false
+GraphicsCaptureSession.IsCursorCaptureEnabled property present = true
+Windows.Foundation.UniversalApiContract v12 present = false
+```
+
+## 预期行为
+
+在系统支持基础 WGC、但不支持边框控制的新接口时，使用默认边框继续窗口捕获；不要因可选属性缺失而使整次截图失败。
+
+建议在原生层按运行时能力或接口可查询性处理 `IsBorderRequired`。只对该可选属性的缺失做降级，保留无效窗口、访问拒绝和设备错误。新系统上的边框策略与用户授权应保持原有语义。
+
+此处提供行为建议，没有宣称已取得或修改官方原生源码。是否存在无条件调用或失效的能力判断，需维护者确认。
+
+## 参考
+
+- [Microsoft：IsBorderRequired 系统版本与 API 合约](https://learn.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturesession.isborderrequired?view=winrt-26100)
+- [Microsoft：运行时版本适配](https://learn.microsoft.com/en-us/windows/apps/develop/testing/version-adaptive-code)
+- [OpenAI：Computer Use 的 Windows 活动桌面要求](https://learn.chatgpt.com/docs/computer-use)
+
+可附本仓库的脱敏环境摘要；无需附带完整桌面、微信内容或账号信息。

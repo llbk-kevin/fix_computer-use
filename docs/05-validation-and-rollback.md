@@ -1,0 +1,65 @@
+# 验收、执行记录与回退
+
+## 本次执行记录
+
+日期：2026-09-21，Asia/Shanghai。
+
+1. 修复前原样提交原始 Markdown，基线为 `2df52f4`。
+2. 默认 PowerShell 入口失败，改用 `cmd.exe`；明确调用系统 Windows PowerShell 5.1 后完成诊断。
+3. 官方 Computer Use 在项目资源管理器窗口复现截图失败；重新选择窗口后重试仍失败。
+4. 官方可访问性文本成功。WinRT 检查确认边框属性和 v12 合约缺失。
+5. 编写、运行备用截图工具，确认负原点、多屏、主屏与局部裁剪。
+6. 归档原始文档，记录环境摘要、修复计划和报告草稿。
+
+## 验收矩阵
+
+| 检查 | 结果 | 证据 |
+| --- | --- | --- |
+| 原始文档基线 | 通过 | `2df52f4`；归档 SHA-256 与原文相同 |
+| Windows 诊断脚本 | 通过 | `artifacts/diagnostics/windows.json` |
+| WGC 类型 / IsSupported | 通过 | True / True |
+| IsBorderRequired / v12 合约 | 缺失 | False / False |
+| 官方截图首次调用 | **失败** | SetIsBorderRequired / 0x80004002 |
+| 重新选择窗口再截图 | **失败** | 同一错误 |
+| 官方文本树 | 通过 | 非空树，长度 6289 |
+| 备用整屏截图 | 通过 | `desktop-baseline.png`，5280×2560，已目视检查 |
+| 指定主屏截图 | 通过 | `primary-monitor.png`，3840×2160 |
+| 屏幕坐标裁剪 | 通过 | `screen-crop.png`，1000×700 |
+| 负原点与裁剪回归测试 | 通过 | 5 个 unittest 测试 |
+| 重复输出保护 | 通过 | 已有 PNG 的调用退出码 1，原文件哈希保持不变 |
+| 越界裁剪保护 | 通过 | 超出桌面的调用退出码 1，未生成输出文件 |
+| 官方原生截图修复 | **未完成** | 尚无兼容后端或系统迁移 |
+| 捆绑 PowerShell 启动 | **仍失败** | CET 错误；已使用可工作入口 |
+| 拼多多订单区域完整性 | 未测试 | 本次未打开该业务页面 |
+
+所有截图和元数据在 `artifacts/screenshots/`，不加入 Git。PNG 元数据明确标记 `native_computer_use_repaired: false`，防止将备用结果误认为原生恢复。
+
+## 复测命令
+
+在命令提示符中执行，诊断脚本使用 UTF-8 写 JSON：
+
+```bat
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File scripts\diagnose-windows.ps1
+python -m unittest discover -s tests -v
+python tools\capture_screen.py --list-monitors
+python tools\capture_screen.py --full
+```
+
+进程级 `-ExecutionPolicy Bypass` 用于运行这个已审阅的本地诊断脚本；没有执行 `Set-ExecutionPolicy` 或改写全局策略。该诊断脚本只读取系统状态，并写本地 JSON。
+
+截图工具检查每次的活动布局，不能用本次 JSON 覆盖将来的真实检测。视觉验收仍需核对目标内容、清晰度、是否遮挡或存在缺失区域。图像非纯色不等于内容完整。
+
+## 变更范围
+
+本次持久变更限于项目仓库：文档、只读诊断脚本、截图工具、坐标测试和 Git 忽略规则。没有修改操作系统、应用二进制、全局 Codex 配置或共享技能内容，也没有安装常驻服务。共享 Skill 的链接入口和本体均未改写。
+
+## 回退
+
+- 备用工具没有后台进程或系统配置，停止运行即可停止使用。
+- 若需要恢复原始文档，在 Git 中查看 `2df52f4`；或将 `docs/archive/2026-09-21-original-notes.md` 复制到新的位置。归档内容已经保持一致，无需强制重置整个仓库。
+- 已保存的截图可在确认不再需要后自行清理；它们不会被 Git 提交或回退覆盖。
+- 后续官方更新或系统迁移若出现问题，按实施前制作的备份和恢复清单回退；本次没有执行这些变化。
+
+## 原生修复最终验收门槛
+
+在未来获得兼容后端或完成系统迁移后，必须用官方 API 获取新的图片，在资源管理器、微信主窗口和实际小程序各做验证。图片内容、时间点、DPI 与操作坐标都正确后，才将“原生截图修复”改为完成。

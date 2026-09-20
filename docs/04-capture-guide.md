@@ -1,0 +1,85 @@
+# 截图工具使用说明
+
+工具：[tools/capture_screen.py](../tools/capture_screen.py)。读取屏幕，不点击、不输入、不移动窗口。以下命令在项目目录的命令提示符中运行。
+
+## 依赖
+
+本机已验证 Python 3.12.7、Pillow 12.2.0。无需新增依赖。移到其他机器时才按需要安装：
+
+```bat
+python -m pip install -r requirements.txt
+```
+
+如果 `python` 指向商店占位符，可明确使用本机已验证的解释器：`C:\Program Files\Python312\python.exe`。不要覆盖 Codex 自带 Python 或系统 DLL。
+
+## 整屏和指定显示器
+
+先确认当前布局，显示器 ID 仅代表本次枚举，重新接屏后应重新检查：
+
+```bat
+python tools\capture_screen.py --list-monitors
+python tools\capture_screen.py --full
+python tools\capture_screen.py --monitor 2
+```
+
+未指定 `--output` 时，以含微秒时间戳的文件名保存 PNG 与同名 JSON 到 `artifacts/screenshots/`。指定输出时必须使用新路径：
+
+```bat
+python tools\capture_screen.py --full --output artifacts\screenshots\my-desktop.png
+```
+
+如果图片或元数据文件已存在，脚本退出，不覆盖旧证据。
+
+## 两种裁剪坐标
+
+矩形格式为 **左、上、右、下**，右、下边界不包含在结果内；单位是实际图像的物理像素。
+
+1. `image`：以整张虚拟桌面 PNG 左上角为 `(0,0)`，默认使用此坐标系。
+2. `screen`：以 Windows 桌面坐标表示，可以为负值。脚本自动减去虚拟桌面原点。
+
+示例：从 4K 主屏左上角取 1000×700 像素：
+
+```bat
+python tools\capture_screen.py --crop=0,0,1000,700 --crop-space screen
+```
+
+当前布局下，同一区域在整屏图片里是：
+
+```bat
+python tools\capture_screen.py --crop=1440,178,2440,878 --crop-space image
+```
+
+左侧竖屏可使用负坐标；负号紧接在参数值中时建议使用等号：
+
+```bat
+python tools\capture_screen.py --crop=-1440,-178,0,2382 --crop-space screen
+```
+
+公式：`image_x = screen_x - virtual_origin_x`，`image_y = screen_y - virtual_origin_y`。当前原点 `(-1440,-178)`，所以需要分别加 `1440` 和 `178`。脚本每次枚举原点，不写死这些值。
+
+工具会拒绝超出整屏图像范围、宽高为零或反向矩形，避免 Pillow 用黑色填充越界部分后被误认成有效截图。显示器布局变化或图像尺寸不匹配时同样报错，请重新列出显示器后重试。
+
+## 与 Computer Use 配合
+
+目标应用需在已解锁的活动桌面中可见；Windows Computer Use 也依赖活动桌面会话。[官方使用说明](https://learn.chatgpt.com/docs/computer-use)
+
+- 用官方 `sky.list_windows()` 选择返回的窗口对象。
+- 使用 `include_screenshot: false, include_text: true` 读取文本；有可靠元素索引时可继续按当前技能要求进行操作。
+- 需要视觉确认时运行本工具并查看新图。窗口移动、滚动、DPI 变化后重新取图。
+- 本工具输出没有官方 `screenshotId`，不能把屏幕像素坐标直接当作窗口相对坐标，也不能伪造 ID 交给官方坐标 API。
+- 不从小程序历史坐标或过期可访问性索引继续盲点。官方原生截图修复前，优先使用文本索引完成有明确依据的操作。
+
+当前版本只提供实时截取，没有“从旧 PNG 二次裁剪”的命令。先看整屏图再裁剪时，要保证目标区域未移动；两次命令是两个不同时间点的画面。
+
+## 常见失败
+
+| 提示 | 下一步 |
+| --- | --- |
+| Cannot access the active desktop | 确认桌面已解锁、会话仍活动 |
+| Per-monitor DPI awareness is required | 使用独立 Python 进程运行，避免在其他宿主已设置 DPI 模式后导入 |
+| Display layout changed / Display size changed | 重新枚举显示器并重试 |
+| Capture is a uniform image | 检查选区是否确实纯色或桌面不可见；纯色判断不是内容正确性的证明 |
+| Output already exists | 换一个文件名或使用默认时间戳 |
+| screen grab failed | 保存具体错误，检查当前会话和沙箱条件，不能归因于缺少 IsBorderRequired |
+
+屏幕截图可能包含聊天或其他窗口。`artifacts/` 已被 Git 忽略；分享资料前只选择任务相关区域。整屏截图中的双屏空白区域是正常布局现象。

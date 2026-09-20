@@ -1,0 +1,2 @@
+# 文档和脚本统一使用 LF，避免跨 shell 执行与审阅时出现换行噪声。
+* text=auto eol=lf
