@@ -6,7 +6,9 @@
 
 Microsoft 将 `IsBorderRequired` 的引入版本标为 **10.0.20348.0**、`UniversalApiContract` v12；本机为 19044.1620，且属性和合约实测均缺失。[Microsoft API 说明](https://learn.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturesession.isborderrequired?view=winrt-26100)
 
-可以确认的是：**当前原生截图路径没有成功处理这个缺失的可选接口，导致整次窗口截图失败。** 未取得原生源码，因此“具体哪一行无条件调用”“是否存在但失效的版本判断”仍属于推断，不写成已完成源码定位。
+可以确认的是：**当前原生截图路径没有成功处理这个缺失的可选接口，导致整次窗口截图失败。** 第一轮未取得原生源码，未宣称完成源码定位；第二轮已在当前二进制版本中定位到该调用，但仍没有源码行号或可构建的官方源码。
+
+第二轮本地修复补充：通过当前版本的反汇编定位到关闭捕获边框的代码段，并实际跳过该段进行验证。`SetIsBorderRequired` 错误随之消失，但后续出现 `FrameArrived timed out`。因此，缺失属性是原始路径中首先遇到的错误，**处理该属性不足以恢复本机原生截图**。该实验补丁已回退；详见 [实际试验记录](07-local-repair-attempts.md)。
 
 ## 为什么能读文字，不能拿到图片
 
@@ -27,7 +29,7 @@ tools/capture_screen.py      → Pillow / Windows GDI → 可见桌面像素 →
 
 安装包 `@oai/sky` 0.7.1 的 `WindowsOptions` 仅声明 `target: "windows"`；`GetWindowState.Input` 提供窗口对象以及截图、文本开关。本次检查的公开类型声明与插件文档未提供 GDI 后端切换或边框设置参数。
 
-原生捕获实现不在本项目内。当前仓库没有可编译并替换该实现的官方源码。因此本次交付不包含原生二进制补丁，也没有用修改 JavaScript 返回值的方式伪造成功。
+原生捕获实现不在本项目内。当前仓库没有可编译并替换该实现的官方源码。第一轮只交付诊断与备用工具；第二轮保存了针对单一文件哈希的实验补丁脚本，但没有把失败补丁保留在已安装程序中，也没有提交厂商二进制文件或用修改 JavaScript 返回值的方式伪造成功。实验脚本不是可用的正式修复。
 
 Microsoft 建议先在运行时检查 WinRT API 是否存在，再使用新增功能。这是后端兼容修复的合适方向：在旧系统保留默认边框、继续基本捕获，并为真正的捕获故障保留明确错误。[版本适配代码指南](https://learn.microsoft.com/en-us/windows/apps/develop/testing/version-adaptive-code)
 

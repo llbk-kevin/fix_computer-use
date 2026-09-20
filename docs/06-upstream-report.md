@@ -66,6 +66,13 @@ Windows.Foundation.UniversalApiContract v12 present = false
 
 此处提供行为建议，没有宣称已取得或修改官方原生源码。是否存在无条件调用或失效的能力判断，需维护者确认。
 
+## 后续本地实验补充
+
+1. 将同一安装包内签名有效的 Swift 后端通过原入口加载：`list_windows` 成功，`get_window_state` 请求截图时进程退出，十进制退出码 3221226505（0xC0000409）。已回退。
+2. 对原后端的单一哈希版本，跳过 `SetIsBorderRequired(false)` 相关可选代码段、保留默认捕获边框：缺失接口错误消失，随后 `FrameArrived timed out: timed out waiting on channel`。在全新进程中先测试左屏仍可复现。已回退。
+
+这说明仅处理边框属性不足以解决本机问题；还需要调查后续捕获帧事件链路。尚不能将超时归因于特定显示驱动或确认是系统本身缺陷。实验细节在本地 [修复记录](07-local-repair-attempts.md)，无需向维护者发送完整桌面或账号内容。
+
 ## 参考
 
 - [Microsoft：IsBorderRequired 系统版本与 API 合约](https://learn.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturesession.isborderrequired?view=winrt-26100)

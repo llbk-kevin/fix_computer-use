@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-09-20T23:35:05.636Z",
+  "nativeScreenshotRepaired": false,
+  "attempts": [
+    {
+      "type": "bundled-signed-swift-backend",
+      "windowEnumeration": true,
+      "screenshot": false,
+      "error": "computer-use helper exited with exit code 3221226505",
+      "exitCodeHex": "0xC0000409",
+      "rolledBack": true
+    },
+    {
+      "type": "version-pinned-default-border-patch",
+      "fileOffset": 251911,
+      "rva": "0x3E407",
+      "jumpTargetRva": "0x3E4A1",
+      "before": "488364246000",
+      "after": "e99500000090",
+      "patchedSha256": "2c5bb0414f98e25f95b18cd18c2e7c2d64d1d820021b721b45b60b7ef4ec57eb",
+      "originalInterfaceErrorEliminated": true,
+      "screenshot": false,
+      "errors": [
+        "FrameArrived timed out: timed out waiting on channel",
+        "window capture timed out: timed out waiting on channel"
+      ],
+      "freshProcessLeftDisplayResult": {
+        "success": false,
+        "error": "Error: FrameArrived timed out: timed out waiting on channel"
+      },
+      "rolledBack": true
+    }
+  ],
+  "backupStates": [
+    {
+      "name": "swift-backend-20260921",
+      "status": "rolled-back"
+    },
+    {
+      "name": "wgc-default-border-20260921",
+      "status": "rolled-back"
+    },
+    {
+      "name": "wgc-left-display-20260921",
+      "status": "rolled-back"
+    }
+  ],
+  "restored": {
+    "sha256": "d09a2f3f4c144be9c180509f5cd67d60f4b0b6fbb62e0f5a1ee131f4b653c512",
+    "signature": "Valid",
+    "temporaryDllsRemoved": true,
+    "windowEnumeration": true,
+    "textAvailable": true,
+    "textLength": 8234
+  },
+  "fallback": {
+    "success": true,
+    "size": [
+      3840,
+      2160
+    ],
+    "sha256": "591d6624c6a838cb080d246006978c7674a7f3e4598baeea8afb9b20da70487f"
+  },
+  "unknowns": [
+    "Cause of Swift backend crash",
+    "Cause of missing WGC frame events",
+    "Whether any particular display driver or OS update resolves frame delivery"
+  ]
+}

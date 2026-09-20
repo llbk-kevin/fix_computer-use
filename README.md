@@ -4,6 +4,8 @@
 
 **当前状态：备用截图已可用；官方 Computer Use 原生窗口截图仍未恢复。**
 
+后续已实际尝试切换包内签名有效的 Swift 后端，以及对原后端应用保留默认捕获边框的版本限定补丁。前者在截图时崩溃，后者进入捕获阶段后等待图像帧超时；两项均已完整回退，原始程序哈希和有效签名已恢复。详见 [本地修复试验与回退](docs/07-local-repair-attempts.md)。
+
 | 项目 | 实测结果 |
 | --- | --- |
 | Windows | Windows 10 Enterprise LTSC 2021，21H2，19044.1620 |
@@ -23,6 +25,7 @@
 4. [截图工具使用说明](docs/04-capture-guide.md)：整屏、单屏、裁剪及双屏坐标转换。
 5. [验收、执行记录与回退](docs/05-validation-and-rollback.md)：通过项、未通过项和复测命令。
 6. [官方后端问题报告草稿](docs/06-upstream-report.md)：最小复现和预期兼容行为，尚未发送。
+7. [本地修复试验与回退](docs/07-local-repair-attempts.md)：实际部署过的两条路线、后续捕获超时及回退证明。
 
 [原始线索](docs/archive/2026-09-21-original-notes.md) 保持内容不变；[环境摘要](docs/evidence/2026-09-21-environment.json) 可机器读取。
 
