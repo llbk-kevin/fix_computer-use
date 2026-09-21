@@ -1,62 +1,61 @@
-# Computer Use 截图故障排查与修复
+# Windows 10 LTSC 上 Codex Computer Use 截图失败的修复方法
 
-2026-09-21 在本机完成基线保存、故障定位、备用截图工具和原生截图的本地兼容修复。
+针对 Windows 10 LTSC 2021 上 Codex Computer Use 无法截图的修复案例，包含原因分析、本地兼容层源码、构建与回退说明，以及备用桌面截图工具。
 
-**当前状态：官方 Computer Use 原生截图已在资源管理器中恢复，连续截图与文字读取验收通过；备用截图工具继续可用。**
+**已在指定版本、本机资源管理器场景验证原生截图恢复；其他版本和业务场景未据此获得验证。** 本项目提供修复方法与已验证案例，补丁仅接受经过检查的原程序哈希。
 
-当前安装的是针对单一版本的本地兼容层：保留默认捕获边框，并使用 D3D11 纹理读取避开回调内的异步转换等待。已通过官方 `sky.get_window_state` 验收，并验证完整回退与重新安装。当前程序不再具有有效厂商签名，原文件已完整备份；详见 [原生修复与回退说明](docs/09-原生截图兼容修复与验收.md)。微信小程序业务页及完整应用更新或重启尚未验收。
+English: A version-pinned workaround for Codex Computer Use screenshot failures on Windows 10 LTSC 2021. It addresses the missing `IsBorderRequired` API and a Windows Graphics Capture bitmap-conversion timeout. Explorer screenshots were verified on the documented configuration; this is a local compatibility patch, not an official vendor update.
 
-前两轮 Swift 后端切换和仅跳过边框设置的失败试验已回退，历史记录见 [本地修复试验与完整回退](docs/07-本地修复试验与完整回退.md)。
+## 是否遇到了同类问题
 
-| 项目 | 实测结果 |
+窗口枚举和文字读取正常，但请求截图时出现：
+
+```text
+SetIsBorderRequired failed: 不支持此接口 (0x80004002)
+```
+
+本案例中，绕过可选的边框设置后，还会出现：
+
+```text
+FrameArrived timed out: timed out waiting on channel
+```
+
+这涉及两个问题：系统缺少 `GraphicsCaptureSession.IsBorderRequired` 可选接口，以及捕获回调内等待图像转换超时。基础 **Windows Graphics Capture（WGC）** 仍然可用，并不是安装一个缺失的 Python 包或运行库就能修复。
+
+先阅读 [故障背景与原因](docs/01-故障背景与原因.md)，再按 [使用与回退](docs/03-使用与回退.md) 检查系统能力和文件版本。仅错误文字相同，不足以证明某台电脑适用这个二进制补丁。
+
+## 已验证环境与结果
+
+| 项目 | 验证记录 |
 | --- | --- |
-| Windows | Windows 10 Enterprise LTSC 2021，21H2，19044.1620 |
-| 原版窗口截图 | `SetIsBorderRequired failed: 不支持此接口 (0x80004002)` |
-| 当前本地兼容版本 | 官方窗口截图与文字读取成功；回退后重新安装复测通过 |
-| Windows 能力 | WGC 可用，但 `GraphicsCaptureSession.IsBorderRequired` 不存在 |
-| Computer Use 文本树 | 与截图同时读取成功，最终连续三次文本树长度 7637、7688、7688 |
-| 本项目备用截图 | 整屏 5280×2560、主屏 3840×2160、局部 1000×700 均成功 |
-| 附带发现 | Codex 捆绑 PowerShell 因 CET 错误启动失败；Windows PowerShell 5.1 可运行诊断 |
+| 系统 | Windows 10 Enterprise LTSC 2021，21H2，19044.1620，x64 |
+| Codex | 应用 26.915.4065.0；Computer Use 插件 26.915.31945；`@oai/sky` 0.7.1 |
+| 原生截图 | 官方 `sky.get_window_state` 在资源管理器中返回可辨认的真实图片 |
+| 连续读取 | 同时获取截图和文字连续三次成功，完整回退并重新安装后再次通过 |
+| 回退 | 原始程序哈希及有效厂商签名均已恢复验证 |
+| 尚未验证 | 其他软件版本、微信小程序等业务页面、HDR、截图坐标点击、完整 Codex 更新或重启 |
 
-原始材料先提交为 `2df52f4`：`docs(baseline): 保存 Computer Use 截图故障原始线索`。随后才开始新增排障脚本和整理文档。原文和归档目录已按要求从工作区移除，Git 历史仍可追溯。
+完整版本、哈希和验收方法统一列于 [使用与回退](docs/03-使用与回退.md)；实际测试记录见 [修复日志](docs/Log/2026-09-21-修复记录.md)。
 
-项目文件夹名称为 `fix_computer-use`，同步到同名的 [GitHub 私有仓库](https://github.com/llbk-kevin/fix_computer-use)。远端为 `origin`，主分支为 `main`；截图、二进制备份和完整诊断输出留在本机的 `artifacts/` 中，不加入提交。
+## 修复方法与阅读顺序
 
-## 文档导航
+兼容层保留系统默认捕获边框，将会卡住的异步表面转换替换为 D3D11 纹理读取，再生成真实位图，继续由官方链路处理截图。备用 GDI 工具只截取可见桌面，适合临时使用，两者的用途和限制不同。
 
-1. [本机环境与证据](docs/01-本机环境与证据.md)：哪些能力存在、哪些缺失，以及证据边界。
-2. [根因分析](docs/02-根因分析.md)：解释 WGC、UI Automation、CET 与沙箱之间的区别。
-3. [分阶段修复计划](docs/03-分阶段修复计划.md)：当前恢复措施、官方后端修复、系统迁移备选方案。
-4. [截图工具使用说明](docs/04-截图工具使用说明.md)：整屏、单屏、裁剪及双屏坐标转换。
-5. [验收、执行记录与回退](docs/05-验收执行记录与回退.md)：通过项、未通过项和复测命令。
-6. [官方后端问题报告草稿](docs/06-官方后端问题报告草稿.md)：最小复现和预期兼容行为，尚未提交给维护者。
-7. [本地修复试验与完整回退](docs/07-本地修复试验与完整回退.md)：实际部署过的两条路线、后续捕获超时及回退证明。
-8. [目录迁移与仓库维护](docs/08-目录迁移与仓库维护.md)：更名后的路径检查、Git 状态和同步方式。
-9. [原生截图兼容修复与验收](docs/09-原生截图兼容修复与验收.md)：当前有效修复、实际验收、版本限制与恢复命令。
-10. [工具入口与配置排查](docs/10-工具入口与配置排查.md)：`node_repl` 的作用、CC Switch 检查结果及只读复查工具。
+| 文档 | 解决的问题 |
+| --- | --- |
+| [01 故障背景与原因](docs/01-故障背景与原因.md) | 为什么能读文字却不能截图，如何判断两个故障点 |
+| [02 修复方案](docs/02-修复方案.md) | 兼容层如何工作，备用工具适合什么情况 |
+| [03 使用与回退](docs/03-使用与回退.md) | 检查版本、准备依赖、构建、安装、验收和恢复原程序 |
+| [04 待提交的官方反馈](docs/04-待提交的官方反馈.md) | 面向维护者的最小复现和建议，尚未提交 |
+| [修复记录](docs/Log/2026-09-21-修复记录.md) | 关键尝试的结果及最终验收摘要 |
 
-[环境摘要](docs/evidence/2026-09-21-environment.json) 可机器读取。原始资料可从基线提交 `2df52f4` 查阅。
+## 项目内容
 
-## 检查原生修复状态
+- `tools/`：原生兼容层源码及构建脚本，备用桌面截图工具。
+- `scripts/`：Windows 能力诊断、原生兼容层安装与回退。
+- `tests/`：多显示器负坐标和裁剪边界测试。
+- `artifacts/`：本机生成的备份、构建产物和截图，由 Git 忽略。
 
-在项目目录的命令提示符中执行：
+原生构建使用 Python、pefile 和 LLVM-MinGW；备用截图使用 Python 与 Pillow。具体版本及命令见 [依赖和操作步骤](docs/03-使用与回退.md)，仓库不分发厂商二进制文件。
 
-```bat
-C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File scripts\install-wgc-readback.ps1 -Mode Status
-```
-
-当前应为 `IsReadbackCompat: true`、`CompanionMatches: true`、`BackupExists: true`。正常任务仍通过官方 `@oai/sky` 调用截图，并处理对应的应用授权。无需重复执行安装脚本。
-
-## 备用截图工具
-
-在项目目录下打开命令提示符，执行：
-
-```bat
-python tools\capture_screen.py --list-monitors
-python tools\capture_screen.py --full
-python tools\capture_screen.py --monitor 2
-```
-
-本机已有 Python 3.12.7 和 Pillow 12.2.0，无需安装额外截图依赖。截图和 JSON 元数据默认保存到 `artifacts/screenshots/`，该目录已被 Git 忽略。每次使用新的默认文件名，不覆盖已有结果。
-
-这个工具读取可见桌面像素，供原生链路不可用时临时截图，也不能获取被其他窗口遮住的内容。当前 `sky.get_window_state({ include_screenshot: true })` 的恢复来自前述原生兼容层，两者各自保留独立验收记录。
+**本地修改后的辅助程序签名状态为 `NotSigned`，不是厂商正式更新。** 安装脚本校验原版、候选程序和 DLL 的哈希，并保留原文件用于回退。其他版本不能仅靠修改哈希或关闭校验来套用；应用更新后应重新判断适用性。
