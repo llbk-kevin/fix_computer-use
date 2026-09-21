@@ -1,0 +1,299 @@
+{
+  "collectedAt": "2026-09-21T08:14:57.726001+00:00",
+  "result": "native_screenshot_restored_for_explorer_with_local_compatibility_build",
+  "vendorUpdate": false,
+  "nativeValidationTransport": "Standard MCP stdio -> installed node_repl js -> @oai/sky -> desktop managed native pipe",
+  "explorerAccess": "Explicit user approval for this diagnostic session; no file input or deletion",
+  "independentProbe": [
+    {
+      "mode": "frame",
+      "target": "primary",
+      "driver": "hardware",
+      "success": true,
+      "stage": "frame_received",
+      "hresult": "0x00000000",
+      "events": 1,
+      "frames": 1,
+      "first_frame_ms": 172,
+      "conversion_timeout": false,
+      "conversion_ms": 0,
+      "callback_thread": 49952,
+      "conversion_thread": 0,
+      "width": 3840,
+      "height": 2160,
+      "rgb_min": 255,
+      "rgb_max": 0,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=0 bitmap_alpha=0"
+    },
+    {
+      "mode": "callback",
+      "target": "primary",
+      "driver": "hardware",
+      "success": false,
+      "stage": "conversion_wait_timeout",
+      "hresult": "0x80070102",
+      "events": 2,
+      "frames": 2,
+      "first_frame_ms": 156,
+      "conversion_timeout": true,
+      "conversion_ms": 0,
+      "callback_thread": 33512,
+      "conversion_thread": 33512,
+      "width": 0,
+      "height": 0,
+      "rgb_min": 255,
+      "rgb_max": 0,
+      "exit_code": 1,
+      "bitmap_metadata": "bitmap_format=0 bitmap_alpha=0"
+    },
+    {
+      "mode": "worker",
+      "target": "primary",
+      "driver": "hardware",
+      "success": true,
+      "stage": "conversion_and_pixels_complete",
+      "hresult": "0x00000000",
+      "events": 6,
+      "frames": 6,
+      "first_frame_ms": 157,
+      "conversion_timeout": false,
+      "conversion_ms": 31,
+      "callback_thread": 31388,
+      "conversion_thread": 1608,
+      "width": 3840,
+      "height": 2160,
+      "rgb_min": 0,
+      "rgb_max": 255,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=87 bitmap_alpha=1"
+    },
+    {
+      "mode": "shim",
+      "target": "primary",
+      "driver": "hardware",
+      "success": true,
+      "stage": "conversion_and_pixels_complete",
+      "hresult": "0x00000000",
+      "events": 1,
+      "frames": 1,
+      "first_frame_ms": 172,
+      "conversion_timeout": false,
+      "conversion_ms": 31,
+      "callback_thread": 30616,
+      "conversion_thread": 30616,
+      "width": 3840,
+      "height": 2160,
+      "rgb_min": 0,
+      "rgb_max": 255,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=87 bitmap_alpha=1"
+    },
+    {
+      "mode": "shim",
+      "target": "left",
+      "driver": "hardware",
+      "success": true,
+      "stage": "conversion_and_pixels_complete",
+      "hresult": "0x00000000",
+      "events": 1,
+      "frames": 1,
+      "first_frame_ms": 172,
+      "conversion_timeout": false,
+      "conversion_ms": 15,
+      "callback_thread": 26772,
+      "conversion_thread": 26772,
+      "width": 1440,
+      "height": 2560,
+      "rgb_min": 0,
+      "rgb_max": 255,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=87 bitmap_alpha=1"
+    },
+    {
+      "mode": "shim",
+      "target": "primary",
+      "driver": "warp",
+      "success": true,
+      "stage": "conversion_and_pixels_complete",
+      "hresult": "0x00000000",
+      "events": 1,
+      "frames": 1,
+      "first_frame_ms": 157,
+      "conversion_timeout": false,
+      "conversion_ms": 62,
+      "callback_thread": 42292,
+      "conversion_thread": 42292,
+      "width": 3840,
+      "height": 2160,
+      "rgb_min": 0,
+      "rgb_max": 255,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=87 bitmap_alpha=1"
+    },
+    {
+      "mode": "shim",
+      "target": "window",
+      "driver": "hardware",
+      "success": true,
+      "stage": "conversion_and_pixels_complete",
+      "hresult": "0x00000000",
+      "events": 1,
+      "frames": 1,
+      "first_frame_ms": 156,
+      "conversion_timeout": false,
+      "conversion_ms": 0,
+      "callback_thread": 22028,
+      "conversion_thread": 22028,
+      "width": 1391,
+      "height": 1069,
+      "rgb_min": 0,
+      "rgb_max": 255,
+      "exit_code": 0,
+      "bitmap_metadata": "bitmap_format=87 bitmap_alpha=1"
+    }
+  ],
+  "nativeRepeatedCapturesAfterReinstall": [
+    {
+      "capturedAt": "2026-09-21T08:09:18.914Z",
+      "screenshotCount": 5,
+      "textLength": 7637,
+      "imageSizes": [
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          1100,
+          849
+        ],
+        [
+          205,
+          32
+        ]
+      ]
+    },
+    {
+      "capturedAt": "2026-09-21T08:09:19.828Z",
+      "screenshotCount": 5,
+      "textLength": 7688,
+      "imageSizes": [
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          1100,
+          849
+        ],
+        [
+          205,
+          32
+        ]
+      ]
+    },
+    {
+      "capturedAt": "2026-09-21T08:09:20.740Z",
+      "screenshotCount": 5,
+      "textLength": 7688,
+      "imageSizes": [
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          3072,
+          1728
+        ],
+        [
+          1100,
+          849
+        ],
+        [
+          205,
+          32
+        ]
+      ]
+    }
+  ],
+  "windowImageVisuallyReviewed": true,
+  "windowImageSize": [
+    1100,
+    849
+  ],
+  "rollbackToOriginalHashAndValidSignatureTested": true,
+  "installedProgramSignatureStatus": "NotSigned",
+  "build": {
+    "original_sha256": "d09a2f3f4c144be9c180509f5cd67d60f4b0b6fbb62e0f5a1ee131f4b653c512",
+    "patched_sha256": "c29ad8f38b58a347ef177ab7706de1fc2e345b3450cc921a4973f3cb5070c666",
+    "border_patch_file_offset": 251911,
+    "activation_jump_rva": 1197732,
+    "compatibility_iat_rva": 1565320,
+    "new_section_rva": 1564672,
+    "signature_impact": "Original Authenticode hash no longer matches; no trust policy is changed",
+    "dll_name": "codex-wgc-readback.dll",
+    "dll_sha256": "04edc7abd9f1916b185eaaa82b5055a28b7c5e324d51e6ab9fcc73e057330c97",
+    "compiler": "clang version 22.1.8 (https://github.com/llvm/llvm-project.git ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)",
+    "pefile_version": "2024.8.26"
+  },
+  "nodeReplConfiguredServer": {
+    "configured_executable_exists": true,
+    "configuration_modified": false,
+    "initialize_ok": true,
+    "tool_names": [
+      "js",
+      "js_add_node_module_dir",
+      "js_reset",
+      "turn_ended"
+    ],
+    "javascript": {
+      "ok": true,
+      "text": [
+        "{\"javascript\":\"ok\",\"skyRpcAvailable\":true}"
+      ]
+    },
+    "window_enumeration": {
+      "ok": true,
+      "text": [
+        "{\"windowCount\":12}"
+      ]
+    },
+    "stderr_line_count": 0
+  },
+  "ccSwitchConfigurationModified": false,
+  "codexConfigurationModified": false,
+  "notValidated": [
+    "WeChat mini-app business pages",
+    "HDR formats",
+    "Full Codex app update/restart",
+    "Screenshot coordinate input"
+  ],
+  "screenshotsCommitted": false,
+  "vendorBinariesCommitted": false,
+  "deliveryChecks": {
+    "rebuildFromOriginalBackupMatchesInstalledExeAndDll": true,
+    "unexpectedBinaryInputsRejected": 3,
+    "coordinateUnitTestsPassed": 5,
+    "utf8AndLocalLinksVerified": true
+  }
+}

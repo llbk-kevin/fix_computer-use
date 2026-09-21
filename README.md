@@ -1,17 +1,20 @@
 # Computer Use 截图故障排查与修复
 
-2026-09-21 在本机完成基线归档、根因验证和桌面像素截图替代方案。
+2026-09-21 在本机完成基线保存、故障定位、备用截图工具和原生截图的本地兼容修复。
 
-**当前状态：备用截图已可用；官方 Computer Use 原生窗口截图仍未恢复。**
+**当前状态：官方 Computer Use 原生截图已在资源管理器中恢复，连续截图与文字读取验收通过；备用截图工具继续可用。**
 
-后续已实际尝试切换包内签名有效的 Swift 后端，以及对原后端应用保留默认捕获边框的版本限定补丁。前者在截图时崩溃，后者进入捕获阶段后等待图像帧超时；两项均已完整回退，原始程序哈希和有效签名已恢复。详见 [本地修复试验与回退](docs/07-本地修复试验与完整回退.md)。
+当前安装的是针对单一版本的本地兼容层：保留默认捕获边框，并使用 D3D11 纹理读取避开回调内的异步转换等待。已通过官方 `sky.get_window_state` 验收，并验证完整回退与重新安装。当前程序不再具有有效厂商签名，原文件已完整备份；详见 [原生修复与回退说明](docs/09-原生截图兼容修复与验收.md)。微信小程序业务页及完整应用更新或重启尚未验收。
+
+前两轮 Swift 后端切换和仅跳过边框设置的失败试验已回退，历史记录见 [本地修复试验与完整回退](docs/07-本地修复试验与完整回退.md)。
 
 | 项目 | 实测结果 |
 | --- | --- |
 | Windows | Windows 10 Enterprise LTSC 2021，21H2，19044.1620 |
-| 官方窗口截图 | `SetIsBorderRequired failed: 不支持此接口 (0x80004002)` |
+| 原版窗口截图 | `SetIsBorderRequired failed: 不支持此接口 (0x80004002)` |
+| 当前本地兼容版本 | 官方窗口截图与文字读取成功；回退后重新安装复测通过 |
 | Windows 能力 | WGC 可用，但 `GraphicsCaptureSession.IsBorderRequired` 不存在 |
-| Computer Use 文本树 | 资源管理器窗口读取成功 |
+| Computer Use 文本树 | 与截图同时读取成功，最终连续三次文本树长度 7637、7688、7688 |
 | 本项目备用截图 | 整屏 5280×2560、主屏 3840×2160、局部 1000×700 均成功 |
 | 附带发现 | Codex 捆绑 PowerShell 因 CET 错误启动失败；Windows PowerShell 5.1 可运行诊断 |
 
@@ -29,10 +32,22 @@
 6. [官方后端问题报告草稿](docs/06-官方后端问题报告草稿.md)：最小复现和预期兼容行为，尚未提交给维护者。
 7. [本地修复试验与完整回退](docs/07-本地修复试验与完整回退.md)：实际部署过的两条路线、后续捕获超时及回退证明。
 8. [目录迁移与仓库维护](docs/08-目录迁移与仓库维护.md)：更名后的路径检查、Git 状态和同步方式。
+9. [原生截图兼容修复与验收](docs/09-原生截图兼容修复与验收.md)：当前有效修复、实际验收、版本限制与恢复命令。
+10. [工具入口与配置排查](docs/10-工具入口与配置排查.md)：`node_repl` 的作用、CC Switch 检查结果及只读复查工具。
 
 [环境摘要](docs/evidence/2026-09-21-environment.json) 可机器读取。原始资料可从基线提交 `2df52f4` 查阅。
 
-## 立即使用
+## 检查原生修复状态
+
+在项目目录的命令提示符中执行：
+
+```bat
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File scripts\install-wgc-readback.ps1 -Mode Status
+```
+
+当前应为 `IsReadbackCompat: true`、`CompanionMatches: true`、`BackupExists: true`。正常任务仍通过官方 `@oai/sky` 调用截图，并处理对应的应用授权。无需重复执行安装脚本。
+
+## 备用截图工具
 
 在项目目录下打开命令提示符，执行：
 
@@ -44,4 +59,4 @@ python tools\capture_screen.py --monitor 2
 
 本机已有 Python 3.12.7 和 Pillow 12.2.0，无需安装额外截图依赖。截图和 JSON 元数据默认保存到 `artifacts/screenshots/`，该目录已被 Git 忽略。每次使用新的默认文件名，不覆盖已有结果。
 
-这个工具读取可见桌面像素，适合先恢复截图任务；它不会让 `sky.get_window_state({ include_screenshot: true })` 自动成功，也不能获取被其他窗口遮住的内容。原生窗口截图的完整修复以文档中的单独验收条件为准。
+这个工具读取可见桌面像素，供原生链路不可用时临时截图，也不能获取被其他窗口遮住的内容。当前 `sky.get_window_state({ include_screenshot: true })` 的恢复来自前述原生兼容层，两者各自保留独立验收记录。
